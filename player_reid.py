@@ -515,19 +515,35 @@ class PlayerReID:
             # Draw ID at the top with increased font size and thickness
             text = f"ID: {track_id}"
             font = cv2.FONT_HERSHEY_SIMPLEX
-            font_scale = 0.8
-            thickness = 2
+            font_scale = 1.2  # Increased font size
+            thickness = 3     # Increased thickness
             txt_size = cv2.getTextSize(text, font, font_scale, thickness)[0]
             
-            # Draw text background
-            cv2.rectangle(im, (int(x1), int(y1) - txt_size[1] - 4), 
-                         (int(x1) + txt_size[0], int(y1)), color, -1)
-            cv2.putText(im, text, (int(x1), int(y1) - 4), font, font_scale, (255, 255, 255), thickness)
+            # Draw text background with padding
+            padding = 4
+            cv2.rectangle(im, 
+                         (int(x1), int(y1) - txt_size[1] - padding*2), 
+                         (int(x1) + txt_size[0] + padding*2, int(y1)), 
+                         color, -1)
             
-            # Also draw ID in the center for better visibility
-            center_x = int((x1 + x2) / 2)
+            # Draw ID text with white color
+            cv2.putText(im, text, 
+                       (int(x1) + padding, int(y1) - padding), 
+                       font, font_scale, (255, 255, 255), thickness)
+            
+            # Also draw ID in the center with larger font and outline for better visibility
+            center_x = int((x1 + x2) / 2 - txt_size[0]/4)
             center_y = int((y1 + y2) / 2)
-            cv2.putText(im, str(track_id), (center_x, center_y), font, 1.2, (255, 255, 255), 3)
+            
+            # Draw black outline first (for better visibility against any background)
+            cv2.putText(im, str(track_id), 
+                       (center_x, center_y), 
+                       font, 1.5, (0, 0, 0), thickness+2)
+            
+            # Draw white text on top of outline
+            cv2.putText(im, str(track_id), 
+                       (center_x, center_y), 
+                       font, 1.5, (255, 255, 255), thickness)
         
         # Draw frame info
         fps = 1.0 / processing_time if processing_time > 0 else 0.0
