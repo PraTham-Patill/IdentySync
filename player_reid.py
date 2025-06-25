@@ -517,13 +517,15 @@ class PlayerReID:
             # Draw ID with larger, more visible text
             text = f"ID: {track_id}"
             font = cv2.FONT_HERSHEY_SIMPLEX
-            font_scale = 1.2  # Significantly increased font size
-            thickness = 3     # Increased thickness for better visibility
+            font_scale = 1.5  # Significantly increased font size
+            thickness = 4     # Increased thickness for better visibility
             txt_size = cv2.getTextSize(text, font, font_scale, thickness)[0]
             
-            # Draw background for text (larger for better visibility)
+            # Position the ID at the top of the bounding box
             # Add padding around text
-            padding = 6
+            padding = 8
+            
+            # Draw background for text (larger for better visibility)
             cv2.rectangle(im, 
                          (int(x1), int(y1) - txt_size[1] - padding*2), 
                          (int(x1) + txt_size[0] + padding*2, int(y1)), 
@@ -538,6 +540,24 @@ class PlayerReID:
             # Then draw white text on top
             cv2.putText(im, text, 
                        (int(x1) + padding, int(y1) - padding), 
+                       font, font_scale, (255, 255, 255), thickness)
+            
+            # Also draw ID at the center of the bounding box for maximum visibility
+            center_x = int(x1 + w/2 - txt_size[0]/2)
+            center_y = int(y1 + h/2 + txt_size[1]/2)
+            
+            # Draw background for centered text
+            cv2.rectangle(im, 
+                         (center_x - padding, center_y - txt_size[1] - padding), 
+                         (center_x + txt_size[0] + padding, center_y + padding), 
+                         color, -1)
+            
+            # Draw centered text with outline
+            cv2.putText(im, text, 
+                       (center_x, center_y), 
+                       font, font_scale, (0, 0, 0), thickness+2)
+            cv2.putText(im, text, 
+                       (center_x, center_y), 
                        font, font_scale, (255, 255, 255), thickness)
         
         # Draw frame info
