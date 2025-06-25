@@ -1,4 +1,4 @@
-# Player Re-Identification in Sports Footage
+# IdentySync: Player Re-Identification in Sports Footage
 
 This project implements a solution for player re-identification in sports footage. The system ensures that players maintain consistent IDs throughout the video, even when they go out of frame and reappear later.
 
@@ -6,18 +6,11 @@ This project implements a solution for player re-identification in sports footag
 
 ## Overview
 
-The player re-identification system uses a combination of object detection (YOLOv11 (provided model: best.pt)) and tracking (ByteTrack) with appearance-based re-identification to maintain consistent player identities throughout the video. The system is designed to work in real-time and can handle challenging scenarios such as occlusions, camera movements, and players going in and out of the frame.
+The player re-identification system uses a combination of object detection (Detection is performed using a fine-tuned Ultralytics YOLOv11 model (`best.pt`)) and tracking with appearance-based re-identification to maintain consistent player identities throughout the video. The system is designed to work in real-time and can handle challenging scenarios such as occlusions, camera movements, and players going in and out of the frame.
 
-## Output Video Demonstration
+## Output
 
-The system successfully tracks and re-identifies players in the video, assigning consistent IDs to each player. The output video (`output_reid.mp4`) shows each player with a colored bounding box and a prominently visible ID label. The enhanced visualization features include:
-
-- **Bold, large player ID labels** with black outlines for maximum visibility
-- **Consistent color-coded bounding boxes** that remain the same for each player throughout the video
-- **Persistent player IDs** that remain consistent even when players leave and re-enter the frame
-- **High-contrast text backgrounds** that make labels readable against any background
-
-![Player Re-Identification Output](output_reid.mp4)
+Each player is tracked with a consistent ID even after temporary disappearance. ID labels are visibly overlaid on bounding boxes in the output video.
 
 ### Implementation Details
 

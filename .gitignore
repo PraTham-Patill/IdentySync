@@ -60,12 +60,12 @@ ENV/
 
 # PyTorch
 *.pt
-!best.pt
-!yolov5s.pt
 
 # Large files
-best.pt
 *.mp4
+
+# Output directory
+output/
 
 # ByteTrack (already a git repo)
 ByteTrack/
