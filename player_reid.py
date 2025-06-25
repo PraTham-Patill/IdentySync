@@ -496,9 +496,7 @@ class PlayerReID:
         print("Video processing completed!")
     
     def _visualize_tracking(self, image, tracks, frame_id, processing_time):
-        """
-        Custom visualization of tracking results with enhanced player ID labels
-        """
+        """Custom visualization of tracking results"""
         im = image.copy()
         
         # Draw tracking results
@@ -511,54 +509,25 @@ class PlayerReID:
             # Get color for this ID (consistent across frames)
             color = self.colors[track_id % len(self.colors)].tolist()
             
-            # Draw bounding box with thicker lines for better visibility
+            # Draw bounding box with increased thickness
             cv2.rectangle(im, (int(x1), int(y1)), (int(x2), int(y2)), color, 3)
             
-            # Draw ID with larger, more visible text
+            # Draw ID at the top with increased font size and thickness
             text = f"ID: {track_id}"
             font = cv2.FONT_HERSHEY_SIMPLEX
-            font_scale = 1.5  # Significantly increased font size
-            thickness = 4     # Increased thickness for better visibility
+            font_scale = 0.8
+            thickness = 2
             txt_size = cv2.getTextSize(text, font, font_scale, thickness)[0]
             
-            # Position the ID at the top of the bounding box
-            # Add padding around text
-            padding = 8
+            # Draw text background
+            cv2.rectangle(im, (int(x1), int(y1) - txt_size[1] - 4), 
+                         (int(x1) + txt_size[0], int(y1)), color, -1)
+            cv2.putText(im, text, (int(x1), int(y1) - 4), font, font_scale, (255, 255, 255), thickness)
             
-            # Draw background for text (larger for better visibility)
-            cv2.rectangle(im, 
-                         (int(x1), int(y1) - txt_size[1] - padding*2), 
-                         (int(x1) + txt_size[0] + padding*2, int(y1)), 
-                         color, -1)
-            
-            # Add black outline to text for better visibility against any background
-            # First draw black outline
-            cv2.putText(im, text, 
-                       (int(x1) + padding, int(y1) - padding), 
-                       font, font_scale, (0, 0, 0), thickness+2)
-            
-            # Then draw white text on top
-            cv2.putText(im, text, 
-                       (int(x1) + padding, int(y1) - padding), 
-                       font, font_scale, (255, 255, 255), thickness)
-            
-            # Also draw ID at the center of the bounding box for maximum visibility
-            center_x = int(x1 + w/2 - txt_size[0]/2)
-            center_y = int(y1 + h/2 + txt_size[1]/2)
-            
-            # Draw background for centered text
-            cv2.rectangle(im, 
-                         (center_x - padding, center_y - txt_size[1] - padding), 
-                         (center_x + txt_size[0] + padding, center_y + padding), 
-                         color, -1)
-            
-            # Draw centered text with outline
-            cv2.putText(im, text, 
-                       (center_x, center_y), 
-                       font, font_scale, (0, 0, 0), thickness+2)
-            cv2.putText(im, text, 
-                       (center_x, center_y), 
-                       font, font_scale, (255, 255, 255), thickness)
+            # Also draw ID in the center for better visibility
+            center_x = int((x1 + x2) / 2)
+            center_y = int((y1 + y2) / 2)
+            cv2.putText(im, str(track_id), (center_x, center_y), font, 1.2, (255, 255, 255), 3)
         
         # Draw frame info
         fps = 1.0 / processing_time if processing_time > 0 else 0.0
