@@ -1,117 +1,135 @@
 # IdentySync: Player Re-Identification in Sports Footage
 
-This project implements a solution for player re-identification in sports footage. The system ensures that players maintain consistent IDs throughout the video, even when they go out of frame and reappear later.
+**IdentySync** implements a robust system for player re-identification in sports videos. It ensures consistent tracking and labeling of players using YOLOv11 for detection, ByteTrack for tracking, and appearance-based re-identification for maintaining consistent player IDs—even when players exit and re-enter the frame.
 
-> **Note**: Large files (model and video files) are not included in this repository due to GitHub size limitations. Please download them separately from the releases section.
+> **Note**: This repository excludes large files (e.g., `.pt` models and `.mp4` videos). Please download them separately as instructed below.
+
+---
+
+## Demonstration
+
+### Player Labeling
+
+`Player Label.png`
+
+The system overlays visible and consistent player ID labels on detected bounding boxes throughout the video. The image below illustrates player detection with ID annotations, updated every frame and consistent across disappearances:
+
+![Player Label](Player%20Label.png)
+
+### Re-Identification After Reappearance
+
+`Reidentification.png`
+
+This frame captures how the system successfully re-identifies players after temporary disappearance. The IDs remain consistent due to the re-identification module:
+
+![Reidentification](Reidentification.png)
+
+---
 
 ## Overview
 
-The player re-identification system uses a combination of object detection (Detection is performed using a fine-tuned Ultralytics YOLOv11 model (`best.pt`)) and tracking with appearance-based re-identification to maintain consistent player identities throughout the video. The system is designed to work in real-time and can handle challenging scenarios such as occlusions, camera movements, and players going in and out of the frame.
+The pipeline integrates detection, tracking, and re-identification:
 
-## Output
+* **Detection**: Ultralytics YOLOv11 (`best.pt`) is used to detect players frame by frame.
+* **Tracking**: ByteTrack assigns unique IDs and maintains trajectories.
+* **Re-Identification**: When a player reappears after occlusion or exiting the frame, their ID is preserved based on visual similarity.
+* **Visualization**: Each bounding box is overlaid with a consistent, color-coded ID label.
 
-Each player is tracked with a consistent ID even after temporary disappearance. ID labels are visibly overlaid on bounding boxes in the output video.
-
-### Implementation Details
-
-1. **Detection**: Each frame is processed using the fine-tuned Ultralytics YOLOv11 model (`best.pt`) to detect players with high accuracy
-2. **Tracking**: A custom tracking algorithm maintains player identities across frames, handling occlusions and fast movements
-3. **Re-Identification**: When players disappear and reappear, the system uses deep appearance features to re-identify them and maintain consistent IDs
-4. **Visualization**: Each player is assigned a unique color and prominently displayed ID label that remains consistent throughout the video, making it easy to follow individual players
+---
 
 ## Features
 
-- Player detection using a fine-tuned Ultralytics YOLOv11 model (`best.pt`)
-- Multi-object tracking with occlusion handling
-- Appearance-based re-identification using deep features extracted from ResNet18
-- Consistent player IDs throughout the video, even when players leave and re-enter the frame
-- Enhanced visualization with prominent player ID labels and consistent color-coded bounding boxes
-- Real-time processing capabilities
-- Comprehensive tracking statistics display (FPS, frame count, gallery size)
+* Accurate detection using YOLOv11 (`best.pt`)
+* Multi-object tracking with ByteTrack
+* Appearance-based re-identification using ResNet18 features
+* Robust performance during occlusion and re-entry
+* FPS counter, track count, and gallery size shown in overlay
+* Modular, scalable, and readable codebase
+* Customizable parameters for real-time tuning
+
+---
 
 ## Requirements
 
-- Python 3.6+
-- PyTorch
-- OpenCV
-- NumPy
-- SciPy
-- Git (for cloning ByteTrack)
+* Python ≥ 3.6
+* PyTorch
+* OpenCV
+* NumPy
+* SciPy
+* Git (for ByteTrack clone)
+
+---
 
 ## Installation
 
-1. Clone this repository:
+1. **Clone the repository**
 
 ```bash
 git clone https://github.com/PraTham-Patill/IdentySync.git
 cd IdentySync
 ```
 
-2. Download the required large files :
-   - `best.pt` (YOLOv11 model file)
-   - `15sec_input_720p.mp4` (Input video file)
-   - Place these files in the root directory of the project
+2. **Place large files**
+   Download the following files separately and place them in the root directory:
 
-3. Run the setup script to install all dependencies:
+* `best.pt` (YOLOv11 fine-tuned model)
+* `15sec_input_720p.mp4` (Input video)
+
+3. **Install dependencies**
 
 ```bash
 python setup.py
 ```
 
-This script will:
-- Install required Python packages
-- Clone and set up ByteTrack
-- Check if the model and video files exist
+This installs all required packages and sets up ByteTrack.
+
+---
 
 ## Usage
 
-To run the player re-identification system:
+Run the complete player re-identification system:
 
 ```bash
 python player_reid.py
 ```
 
-This will process the input video (`15sec_input_720p.mp4`) and generate an output video (`output_reid.mp4`) with tracked players.
+This processes the input video and generates `output_reid.mp4`.
 
-For basic tracking without re-identification features:
+To perform basic tracking only:
 
 ```bash
 python player_tracking.py
 ```
 
+---
+
 ## Project Structure
 
-- `player_reid.py`: Main implementation with advanced re-identification features
-- `player_tracking.py`: Basic implementation using ByteTrack
-- `setup.py`: Script to set up dependencies
-- `README.md`: Project documentation
-- `report.md`: Technical report on the approach and results
+* `player_reid.py` – Advanced implementation with re-identification
+* `player_tracking.py` – Basic tracker-only implementation
+* `evaluate.py` – Metrics and evaluation utilities
+* `requirements.txt` – Required Python packages
+* `setup.py` – Dependency installer
+* `report.md` – Technical report
+* `README.md` – Project documentation
+* `.gitignore` – Excludes `.pt`, `.mp4`, and other large or binary files
 
-## Approach
-
-The system uses a multi-stage approach:
-
-1. **Detection**: A fine-tuned Ultralytics YOLOv11 model (`best.pt`) is used to detect players in each frame with high accuracy
-2. **Tracking**: A custom tracking algorithm associates detections across frames to create tracks, handling occlusions and fast movements
-3. **Feature Extraction**: Deep features are extracted from player bounding boxes using a pre-trained ResNet18 model
-4. **Gallery Management**: Features of tracked players are stored in a gallery for later re-identification
-5. **Re-Identification**: When players reappear after leaving the frame, they are compared with the gallery to maintain consistent IDs
-6. **Enhanced Visualization**: Players are displayed with prominent ID labels and consistent color-coded bounding boxes for easy tracking
+---
 
 ## Customization
 
-You can customize the system by modifying the following parameters in `player_reid.py`:
+Change default values in `player_reid.py`:
 
-- `conf_thresh`: Confidence threshold for detection (default: 0.5)
-- `iou_thresh`: IOU threshold for NMS (default: 0.45)
-- `reid_threshold`: Threshold for re-identification (default: 0.6)
-- `max_disappeared_frames`: Maximum frames to keep disappeared players (default: 60)
+* `conf_thresh`: Detection confidence threshold
+* `iou_thresh`: Intersection over union threshold
+* `reid_threshold`: Re-ID matching threshold
+* `max_disappeared_frames`: How long to keep player features in memory
 
-## License
-
-This project is provided for educational purposes only.
+---
 
 ## Acknowledgements
 
-- YOLOv11 (provided model: best.pt) for object detection
-- [ByteTrack](https://github.com/ifzhang/ByteTrack) for multi-object tracking
+* YOLOv11 from Ultralytics (custom fine-tuned model `best.pt`)
+* [ByteTrack](https://github.com/ifzhang/ByteTrack) for tracking module
+
+---
