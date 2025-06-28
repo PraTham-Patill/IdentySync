@@ -47,7 +47,7 @@ git clone https://github.com/PraTham-Patill/IdentySync.git
 cd IdentySync
 ```
 
-2. Download the required large files from the [Releases](https://github.com/PraTham-Patill/IdentySync/releases) section:
+2. Download the required large files :
    - `best.pt` (YOLOv11 model file)
    - `15sec_input_720p.mp4` (Input video file)
    - Place these files in the root directory of the project
